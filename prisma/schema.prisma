@@ -1,0 +1,49 @@
+// BikinKarya — Prisma Schema
+// Matches PRD Section 7 Database Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  field     String   // "uiux" | "graphicdesign" | "digimark"
+  createdAt DateTime @default(now())
+
+  tasks      Task[]
+  portfolios Portfolio[]
+}
+
+model Task {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  field      String
+  difficulty String   // "junior" | "mid" | "senior"
+  brief      Json
+  status     String   @default("todo") // "todo" | "inprogress" | "done"
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  portfolio Portfolio?
+}
+
+model Portfolio {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId    String   @unique
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  thumbnail String   // URL from Supabase Storage
+  workLink  String   // External link (Figma, Behance, Drive)
+  isPublic  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
