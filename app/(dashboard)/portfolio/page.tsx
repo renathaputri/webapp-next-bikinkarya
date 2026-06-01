@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { fetchApi, fetchApiUpload } from "@/lib/api-client";
@@ -13,7 +13,7 @@ import { HiOutlineArrowPath, HiArrowUpTray, HiArrowTopRightOnSquare, HiGlobeAlt,
 import Link from "next/link";
 import { FeatureGuide } from "@/components/ui/feature-guide";
 
-export default function PortfolioPage() {
+function PortfolioContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const uploadTaskId = searchParams.get("upload");
@@ -514,5 +514,19 @@ export default function PortfolioPage() {
         }
       />
     </div>
+  );
+}
+
+export default function PortfolioPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-[50vh] items-center justify-center">
+          <HiOutlineArrowPath className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      }
+    >
+      <PortfolioContent />
+    </Suspense>
   );
 }
