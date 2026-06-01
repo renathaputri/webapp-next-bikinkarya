@@ -57,7 +57,6 @@ export default function PortfolioPage() {
       if (meRes?.data) {
         setUserEmail(meRes.data.email ?? null);
       }
-      // Only show tasks that don't already have a portfolio item
       const availableTasks = tasksRes.data.filter((t: any) => !t.portfolio);
       setTasks(availableTasks);
     } catch (error) {
@@ -94,13 +93,11 @@ export default function PortfolioPage() {
 
     setIsUploading(true);
     try {
-      // 1. Upload file
       const formData = new FormData();
       formData.append("file", file);
       const uploadRes = await fetchApiUpload("/upload/thumbnail", formData);
       const thumbnailUrl = uploadRes.data.url;
 
-      // 2. Create portfolio entry
       await fetchApi("/portfolio", {
         method: "POST",
         body: JSON.stringify({
@@ -111,7 +108,6 @@ export default function PortfolioPage() {
         }),
       });
 
-      // Reset and reload
       setIsModalOpen(false);
       setFile(null);
       setWorkLink("");
@@ -128,7 +124,6 @@ export default function PortfolioPage() {
 
   const toggleVisibility = async (id: string, currentPublic: boolean) => {
     try {
-      // Optimistic update
       setPortfolios(portfolios.map(p => p.id === id ? { ...p, isPublic: !currentPublic } : p));
       await fetchApi(`/portfolio/${id}`, {
         method: "PATCH",
@@ -137,7 +132,6 @@ export default function PortfolioPage() {
     } catch (error) {
       console.error(error);
       toast.error("Gagal update status nih. Coba refresh.");
-      // Revert on error
       setPortfolios(portfolios.map(p => p.id === id ? { ...p, isPublic: currentPublic } : p));
     }
   };
@@ -162,7 +156,6 @@ export default function PortfolioPage() {
     }
   };
 
-
   if (isLoading) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
@@ -186,6 +179,7 @@ export default function PortfolioPage() {
           </div>
         </div>
       )}
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Portofolio</h1>
@@ -227,15 +221,15 @@ export default function PortfolioPage() {
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {portfolios.map((item) => (
-            <Card 
-              key={item.id} 
+            <Card
+              key={item.id}
               className="overflow-hidden flex flex-col group cursor-pointer hover:border-primary/50 transition-colors"
               onClick={() => setSelectedBrief({ ...item.task.brief, difficulty: item.task.difficulty, field: item.task.field })}
             >
               <div className="aspect-video w-full bg-muted relative overflow-hidden">
-                <img 
-                  src={item.thumbnail} 
-                  alt={item.task.brief?.title} 
+                <img
+                  src={item.thumbnail}
+                  alt={item.task.brief?.title}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute top-2 right-2">
@@ -261,21 +255,21 @@ export default function PortfolioPage() {
                     <HiArrowTopRightOnSquare className="mr-1.5 h-3 w-3" /> Lihat Hasil
                   </Button>
                 </a>
-                <Button 
-                  variant="outline" 
-                  size="icon" 
+                <Button
+                  variant="outline"
+                  size="icon"
                   className="h-8 w-8 pointer-events-auto"
                   onClick={(e) => { e.stopPropagation(); toggleVisibility(item.id, item.isPublic); }}
                   title={item.isPublic ? "Jadikan Privat" : "Jadikan Publik"}
                 >
                   {item.isPublic ? <HiLockClosed className="h-3 w-3" /> : <HiGlobeAlt className="h-3 w-3" />}
                 </Button>
-                <Button 
-                  variant="destructive" 
-                  size="icon" 
-                  className="h-8 w-8 pointer-events-auto bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground border-0"
-                  onClick={(e) => { 
-                    e.stopPropagation(); 
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-8 w-8 pointer-events-auto bg-destructive/10 text-destructive hover:bg-destructive hover:text-white border-destructive/20"
+                  onClick={(e) => {
+                    e.stopPropagation();
                     setPortfolioToDelete(item.id);
                     setIsDeleteModalOpen(true);
                   }}
@@ -330,14 +324,14 @@ export default function PortfolioPage() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="thumbnail">Thumbnail (Gambar)</Label>
-                  <Input 
-                    id="thumbnail" 
-                    type="file" 
-                    accept="image/*" 
-                    required 
+                  <Input
+                    id="thumbnail"
+                    type="file"
+                    accept="image/*"
+                    required
                     ref={fileInputRef}
                     onChange={handleFileChange}
                     className="cursor-pointer file:text-primary file:font-medium hover:file:text-primary/80"
@@ -347,11 +341,11 @@ export default function PortfolioPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="workLink">Link Hasil Kerja</Label>
-                  <Input 
-                    id="workLink" 
-                    type="url" 
-                    placeholder="https://figma.com/... atau https://drive.google.com/..." 
-                    required 
+                  <Input
+                    id="workLink"
+                    type="url"
+                    placeholder="https://figma.com/... atau https://drive.google.com/..."
+                    required
                     value={workLink}
                     onChange={(e) => setWorkLink(e.target.value)}
                   />
@@ -375,7 +369,7 @@ export default function PortfolioPage() {
       {selectedBrief && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-card rounded-xl shadow-2xl border border-border flex flex-col animate-in zoom-in-95 duration-200 relative">
-            <button 
+            <button
               onClick={() => setSelectedBrief(null)}
               className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-muted text-muted-foreground transition-colors"
             >
@@ -394,13 +388,11 @@ export default function PortfolioPage() {
             </div>
 
             <div className="p-6 space-y-5 text-sm flex-1">
-              {/* Goal */}
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1.5">Goal</p>
                 <p className="text-foreground leading-relaxed">{selectedBrief.goal}</p>
               </div>
 
-              {/* Platform & Target */}
               <div className="grid grid-cols-2 gap-4 rounded-lg border border-border bg-muted/20 p-4">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">Platform</p>
@@ -416,7 +408,6 @@ export default function PortfolioPage() {
                 </div>
               </div>
 
-              {/* Deliverables */}
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Expected Deliverables</p>
                 <ul className="space-y-1.5 pl-4">
@@ -426,7 +417,6 @@ export default function PortfolioPage() {
                 </ul>
               </div>
 
-              {/* Constraints */}
               <div className="rounded-lg border border-border bg-muted/30 p-4">
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Constraints & Arahan</p>
                 <ul className="space-y-1.5 pl-4">
@@ -439,7 +429,7 @@ export default function PortfolioPage() {
                 </ul>
               </div>
             </div>
-            
+
             <div className="border-t border-border p-4 flex justify-end bg-muted/10">
               <Button onClick={() => setSelectedBrief(null)}>Tutup</Button>
             </div>
@@ -460,7 +450,6 @@ export default function PortfolioPage() {
                 }}>
                   <HiShare className="w-4 h-4 mr-2" /> Copy Link
                 </Button>
-
                 <Button variant="ghost" size="icon" onClick={() => setIsPublicModalOpen(false)}>
                   <HiXMark className="w-5 h-5" />
                 </Button>
@@ -489,9 +478,9 @@ export default function PortfolioPage() {
               </CardDescription>
             </CardHeader>
             <CardFooter className="flex gap-3 pt-4">
-              <Button 
-                variant="outline" 
-                className="flex-1" 
+              <Button
+                variant="outline"
+                className="flex-1"
                 onClick={() => {
                   setIsDeleteModalOpen(false);
                   setPortfolioToDelete(null);
@@ -500,9 +489,9 @@ export default function PortfolioPage() {
               >
                 Batal
               </Button>
-              <Button 
-                variant="destructive" 
-                className="flex-1" 
+              <Button
+                variant="outline"
+                className="flex-1 border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive hover:text-white hover:border-destructive"
                 onClick={handleDelete}
                 isLoading={isDeleting}
               >
