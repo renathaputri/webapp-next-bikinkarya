@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
         userId,
         ...(status ? { status } : {}),
       },
+      include: { portfolio: true },
       orderBy: { createdAt: "desc" },
     });
 

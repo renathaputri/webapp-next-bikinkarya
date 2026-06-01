@@ -11,7 +11,7 @@ const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 export interface SessionPayload {
   userId: string;
   username: string;
-  field: string;
+  field: string | null;
 }
 
 // ── Sign JWT ──────────────────────────────────────────────

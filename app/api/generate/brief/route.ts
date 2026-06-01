@@ -14,10 +14,11 @@ export async function POST(request: NextRequest) {
     }
 
     const brief = await generateBrief(field, difficulty);
-    
+
     return ok(brief);
   } catch (error) {
-    console.error("Generate brief error:", error);
-    return err("Failed to generate brief", 500);
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error("Generate brief error:", message);
+    return err(`Failed to generate brief: ${message}`, 500);
   }
 }

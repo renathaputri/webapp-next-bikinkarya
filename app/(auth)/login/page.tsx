@@ -9,16 +9,16 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchApi } from "@/lib/api-client";
 import { Briefcase } from "lucide-react";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
+    setIsLoading(true);
 
     const formData = new FormData(e.currentTarget);
     const username = formData.get("username") as string;
@@ -32,7 +32,7 @@ export default function LoginPage() {
       router.push("/dashboard");
       router.refresh();
     } catch (err: any) {
-      setError(err.message);
+      toast.error(err.message || "Gagal masuk");
       setIsLoading(false);
     }
   };
@@ -59,7 +59,7 @@ export default function LoginPage() {
             <Input id="password" name="password" type="password" placeholder="••••••••" required />
           </div>
           
-          {error && <p className="text-sm text-destructive font-medium">{error}</p>}
+
           
           <Button type="submit" className="w-full mt-2" size="lg" isLoading={isLoading}>
             Masuk

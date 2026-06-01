@@ -7,7 +7,13 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
     },
   });
 
-  const data = await response.json();
+  const text = await response.text();
+  let data;
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch (e) {
+    data = { error: text || "An error occurred parsing response" };
+  }
 
   if (!response.ok) {
     throw new Error(data.error || "An error occurred");
@@ -22,7 +28,13 @@ export async function fetchApiUpload(endpoint: string, formData: FormData) {
     body: formData,
   });
 
-  const data = await response.json();
+  const text = await response.text();
+  let data;
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch (e) {
+    data = { error: text || "Upload failed and returned invalid JSON" };
+  }
 
   if (!response.ok) {
     throw new Error(data.error || "Upload failed");

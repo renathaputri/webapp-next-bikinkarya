@@ -13,11 +13,10 @@ export async function PATCH(request: NextRequest, segmentData: { params: Params 
     const taskId = params.id;
     const { status } = await request.json();
 
-    if (!["todo", "inprogress", "done"].includes(status)) {
+    if (!["todo", "inprogress", "done", "archived"].includes(status)) {
       return err("Invalid status", 400);
     }
 
-    // Verify ownership
     const task = await prisma.task.findUnique({ where: { id: taskId } });
     if (!task) return notFound("Task not found");
     if (task.userId !== userId) return forbidden("Not your task");
@@ -42,14 +41,11 @@ export async function DELETE(request: NextRequest, segmentData: { params: Params
 
     const taskId = params.id;
 
-    // Verify ownership
     const task = await prisma.task.findUnique({ where: { id: taskId } });
     if (!task) return notFound("Task not found");
     if (task.userId !== userId) return forbidden("Not your task");
 
-    await prisma.task.delete({
-      where: { id: taskId },
-    });
+    await prisma.task.delete({ where: { id: taskId } });
 
     return ok({ message: "Task deleted successfully" });
   } catch (error) {

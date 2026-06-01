@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, Plus, Loader2, Briefcase } from "lucide-react";
+import { Sparkles, Plus, Loader2, Briefcase, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { fetchApi } from "@/lib/api-client";
+import { toast } from "sonner";
 
 export default function GeneratePage() {
   const router = useRouter();
@@ -16,6 +17,14 @@ export default function GeneratePage() {
   const [brief, setBrief] = useState<any>(null);
   const [field, setField] = useState("uiux");
   const [difficulty, setDifficulty] = useState("junior");
+
+  useEffect(() => {
+    fetchApi("/auth/me")
+      .then((res) => {
+        if (res.data?.field) setField(res.data.field);
+      })
+      .catch(console.error);
+  }, []);
 
   const handleGenerate = async () => {
     setIsGenerating(true);
@@ -28,7 +37,9 @@ export default function GeneratePage() {
       setBrief(res.data);
     } catch (error) {
       console.error(error);
-      alert("Failed to generate brief. Please try again.");
+      toast.error("Waduh, gagal generate brief nih 😵", {
+        description: "Tenang, coba klik generate lagi ya. Kadang AI-nya lagi sibuk.",
+      });
     } finally {
       setIsGenerating(false);
     }
@@ -45,7 +56,9 @@ export default function GeneratePage() {
       router.push("/board");
     } catch (error) {
       console.error(error);
-      alert("Failed to save task to board.");
+      toast.error("Gagal simpan ke board 😢", {
+        description: "Ada gangguan sementara. Coba lagi sebentar ya!",
+      });
       setIsSaving(false);
     }
   };
@@ -59,42 +72,58 @@ export default function GeneratePage() {
         </p>
       </div>
 
-      <Card>
+      <Card className="border-border/50 shadow-sm overflow-hidden">
+        <div className="bg-primary/5 px-6 py-4 border-b border-border/50 flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">Pengaturan Generate</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">Sesuaikan tingkat kesulitan untuk brief yang di-generate</p>
+          </div>
+        </div>
         <CardContent className="pt-6">
           <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label>Bidang</Label>
-              <select
-                className="flex h-10 w-full rounded-md border border-border bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
-                value={field}
-                onChange={(e) => setField(e.target.value)}
-              >
-                <option value="uiux">UI/UX Design</option>
-                <option value="graphicdesign">Graphic Design</option>
-                <option value="digimark">Digital Marketing</option>
-              </select>
+            <div className="flex flex-col space-y-2.5">
+              <Label className="text-sm font-semibold text-foreground/80 flex items-center gap-2">
+                Bidang <Lock className="h-3.5 w-3.5 text-muted-foreground/60" />
+              </Label>
+              <div className="flex h-11 w-full items-center gap-3 rounded-lg border border-border/60 bg-muted/30 px-4 py-2 text-sm text-muted-foreground cursor-not-allowed transition-colors">
+                <div className="h-2 w-2 rounded-full bg-primary/60" />
+                <span className="font-medium capitalize">
+                  {field === "uiux" ? "UI/UX Design" : 
+                   field === "graphicdesign" ? "Graphic Design" : 
+                   field === "digimark" ? "Digital Marketing" : field}
+                </span>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label>Tingkat Kesulitan</Label>
-              <select
-                className="flex h-10 w-full rounded-md border border-border bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
-                value={difficulty}
-                onChange={(e) => setDifficulty(e.target.value)}
-              >
-                <option value="junior">Junior (Clear brief, low ambiguity)</option>
-                <option value="mid">Mid (Realistic workflow, constraints)</option>
-                <option value="senior">Senior (High ambiguity, strategic)</option>
-              </select>
+            
+            <div className="flex flex-col space-y-2.5">
+              <Label className="text-sm font-semibold text-foreground/80">
+                Tingkat Kesulitan
+              </Label>
+              <div className="relative">
+                <select
+                  className="flex h-11 w-full appearance-none rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium shadow-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 cursor-pointer hover:bg-muted/20 hover:border-primary/30"
+                  value={difficulty}
+                  onChange={(e) => setDifficulty(e.target.value)}
+                >
+                  <option value="junior">Junior (Arahan jelas, minim ambiguitas)</option>
+                  <option value="mid">Mid (Sesuai workflow industri nyata)</option>
+                  <option value="senior">Senior (Fokus ke strategi & problem-solving)</option>
+                </select>
+                <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-50"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+              </div>
             </div>
           </div>
+
           <Button 
-            className="w-full mt-6" 
+            className="w-full mt-8 h-12 text-base font-bold shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5 group" 
             size="lg" 
             onClick={handleGenerate}
             isLoading={isGenerating}
           >
-            <Sparkles className="mr-2 h-4 w-4" />
-            Generate Brief AI
+            {isGenerating ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Sparkles className="mr-2 h-5 w-5 group-hover:text-amber-200 transition-colors" />}
+            {isGenerating ? "Menyusun Brief..." : "Generate Brief AI"}
           </Button>
         </CardContent>
       </Card>
@@ -128,7 +157,7 @@ export default function GeneratePage() {
               <h3 className="font-semibold text-lg mb-2">Goal</h3>
               <p className="text-muted-foreground">{brief.goal}</p>
             </div>
-            
+
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <h3 className="font-semibold mb-2">Platform & Target User</h3>

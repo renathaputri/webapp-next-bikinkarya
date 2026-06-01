@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Sparkles, CheckCircle2, Briefcase, ArrowRight } from "lucide-react";
+import { HiSparkles, HiCheckCircle, HiBriefcase, HiArrowRight } from "react-icons/hi2";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { fetchApi } from "@/lib/api-client";
@@ -53,7 +53,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Brief Aktif</CardTitle>
-            <Sparkles className="h-4 w-4 text-muted-foreground" />
+            <HiSparkles className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{isLoading ? "-" : stats.activeTasks}</div>
@@ -64,7 +64,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Task Selesai</CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+            <HiCheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{isLoading ? "-" : stats.completedTasks}</div>
@@ -75,7 +75,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Portofolio Publik</CardTitle>
-            <Briefcase className="h-4 w-4 text-muted-foreground" />
+            <HiBriefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{isLoading ? "-" : stats.portfolioItems}</div>
@@ -87,15 +87,17 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="bg-primary text-primary-foreground">
           <CardHeader>
-            <CardTitle>Mulai Project Baru</CardTitle>
+            <CardTitle className="text-black">Mulai Project Baru</CardTitle>
             <CardDescription className="text-primary-foreground/80">
               Generate brief realistis dari AI dan mulai simulasikan pengalaman kerjamu.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Link href="/generate">
-              <Button variant="secondary" className="w-full sm:w-auto">
-                Generate Brief <ArrowRight className="ml-2 h-4 w-4" />
+              <Button
+                className="w-full sm:w-auto bg-black text-white hover:bg-neutral-800"
+              >
+                Generate Brief <HiArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </CardContent>

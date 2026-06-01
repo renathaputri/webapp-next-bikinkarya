@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
+import { HiOutlineArrowPath } from "react-icons/hi2";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -19,26 +19,26 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={isLoading || props.disabled}
         className={cn(
-          "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50",
+          "inline-flex items-center justify-center whitespace-nowrap rounded-md text-[15px] font-semibold transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50",
           {
-            "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90":
+            "bg-primary text-[#000000] shadow-sm hover:bg-accent":
               variant === "default",
-            "bg-secondary text-secondary-foreground hover:bg-secondary/80":
+            "border border-border bg-transparent text-foreground shadow-sm hover:bg-secondary":
               variant === "secondary",
-            "border border-border bg-transparent shadow-sm hover:bg-secondary":
+            "border border-border bg-transparent shadow-sm hover:bg-secondary text-foreground":
               variant === "outline",
-            "hover:bg-secondary hover:text-foreground": variant === "ghost",
+            "bg-transparent text-muted-foreground hover:text-foreground": variant === "ghost",
             "text-primary underline-offset-4 hover:underline": variant === "link",
-            "h-9 px-4 py-2": size === "default",
+            "px-[20px] py-[10px]": size === "default",
             "h-8 rounded-md px-3 text-xs": size === "sm",
-            "h-10 rounded-md px-8": size === "lg",
-            "h-9 w-9": size === "icon",
+            "h-12 rounded-md px-8 text-base": size === "lg",
+            "h-9 w-9 rounded-md": size === "icon",
           },
           className
         )}
         {...props}
       >
-        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {isLoading && <HiOutlineArrowPath className="mr-2 h-4 w-4 animate-spin" />}
         {children}
       </button>
     );

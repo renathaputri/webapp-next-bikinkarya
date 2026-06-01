@@ -6,14 +6,20 @@ import bcrypt from "bcryptjs";
 
 export async function POST(request: NextRequest) {
   try {
-    const { username, password, field } = await request.json();
+    const { username, password } = await request.json();
 
-    if (!username || !password || !field) {
-      return err("Username, password, and field are required", 400);
+    if (!username || !password) {
+      return err("Username and password are required", 400);
     }
 
-    if (password.length < 6) {
-      return err("Password must be at least 6 characters", 400);
+    // Strict password validation
+    if (password.length < 8) {
+      return err("Password must be at least 8 characters", 400);
+    }
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    if (!hasLetter || !hasNumber) {
+      return err("Password must contain both letters and numbers", 400);
     }
 
     // Check if user exists
@@ -28,12 +34,11 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
+    // Create user (field is null by default as per schema)
     const user = await prisma.user.create({
       data: {
         username,
         password: hashedPassword,
-        field,
       },
     });
 

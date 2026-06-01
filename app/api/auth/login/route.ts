@@ -18,14 +18,14 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user) {
-      return err("Invalid credentials", 401);
+      return err("Hmm, sepertinya username atau password kamu keliru deh. Coba dicek lagi ya!", 401);
     }
 
     // Verify password
     const isValid = await bcrypt.compare(password, user.password);
 
     if (!isValid) {
-      return err("Invalid credentials", 401);
+      return err("Hmm, sepertinya username atau password kamu keliru deh. Coba dicek lagi ya!", 401);
     }
 
     // Set session

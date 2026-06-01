@@ -11,14 +11,18 @@ const PROTECTED_PREFIXES = [
   "/api/upload",
   "/api/auth/me",
   "/api/auth/logout",
+  "/api/auth/delete",
+  "/api/auth/onboarding",
   "/api/profile",
-  // App pages (will be added when frontend is built)
+  "/api/feedback",
+  // App pages
   "/dashboard",
   "/generate",
   "/board",
   "/portfolio",
   "/interview",
   "/profile",
+  "/onboarding",
 ];
 
 // Routes that are always public
@@ -73,11 +77,30 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
+  // Check if user has completed onboarding (selected a field)
+  // If not, redirect them to /onboarding, unless they are already there or logging out
+  if (!session.field && pathname !== "/onboarding" && pathname !== "/api/auth/onboarding" && pathname !== "/api/auth/logout" && pathname !== "/api/auth/delete") {
+    if (pathname.startsWith("/api/")) {
+      return Response.json(
+        { success: false, error: "Onboarding required" },
+        { status: 403 }
+      );
+    }
+    return NextResponse.redirect(new URL("/onboarding", request.url));
+  }
+  
+  // Prevent user who already has a field from accessing onboarding
+  if (session.field && pathname === "/onboarding") {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
   // Attach user info to request headers for downstream route handlers
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-user-id", session.userId);
   requestHeaders.set("x-user-name", session.username);
-  requestHeaders.set("x-user-field", session.field);
+  if (session.field) {
+    requestHeaders.set("x-user-field", session.field);
+  }
 
   return NextResponse.next({
     request: { headers: requestHeaders },

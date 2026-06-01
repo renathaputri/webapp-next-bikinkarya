@@ -3,34 +3,63 @@
 @theme {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   
-  --color-background: #FAFAFA;
-  --color-foreground: #111111;
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
   
-  --color-card: #FFFFFF;
-  --color-card-foreground: #111111;
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-fg);
   
-  --color-border: #EAEAEA;
-  --color-input: #EAEAEA;
+  --color-border: var(--border);
+  --color-input: var(--input);
   
-  --color-primary: #111111;
-  --color-primary-foreground: #FFFFFF;
+  --color-primary: #F5C542;
+  --color-primary-foreground: #000000;
   
-  --color-secondary: #F5F5F5;
-  --color-secondary-foreground: #111111;
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-fg);
   
-  --color-accent: #0070F3;
-  --color-accent-foreground: #FFFFFF;
-  
-  --color-destructive: #FF0000;
+  --color-destructive: #EF4444;
   --color-destructive-foreground: #FFFFFF;
   
-  --color-muted: #888888;
-  --color-muted-foreground: #666666;
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-fg);
+  
+  --color-accent: #D4A820;
+  --color-success: #22C55E;
+  --color-processing: #60A5FA;
 
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+}
+
+/* ── Light theme (default) ─────────────────────────── */
+:root {
+  --bg: #FAFAFA;
+  --fg: #111111;
+  --card: #FFFFFF;
+  --card-fg: #111111;
+  --border: #E2E2E2;
+  --input: #F0F0F0;
+  --secondary: #F5F5F5;
+  --secondary-fg: #111111;
+  --muted: #A0A0A0;
+  --muted-fg: #6B6B6B;
+}
+
+/* ── Dark theme ────────────────────────────────────── */
+.dark {
+  --bg: #000000;
+  --fg: #FFFFFF;
+  --card: #1A1A1A;
+  --card-fg: #FFFFFF;
+  --border: #2E2E2E;
+  --input: #252525;
+  --secondary: #1A1A1A;
+  --secondary-fg: #FFFFFF;
+  --muted: #555555;
+  --muted-fg: #888888;
 }
 
 @layer base {
@@ -52,17 +81,11 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 }
 
 @layer utilities {
-  .glass {
-    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-sm;
-  }
-  
-  .glass-dark {
-    @apply bg-black/70 backdrop-blur-md border border-white/10 shadow-sm text-white;
-  }
 
   /* Custom scrollbar for a cleaner look */
   ::-webkit-scrollbar {
@@ -73,7 +96,7 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-muted/30 rounded-full;
+    @apply bg-muted/30 rounded-sm;
   }
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-muted/50;
